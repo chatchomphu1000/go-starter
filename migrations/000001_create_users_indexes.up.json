@@ -1,0 +1,21 @@
+[
+  {
+    "createIndexes": "users",
+    "indexes": [
+      {
+        "key": { "email": 1 },
+        "name": "email_unique",
+        "unique": true,
+        "collation": { "locale": "en", "strength": 2 }
+      },
+      {
+        "key": { "created_at": -1 },
+        "name": "created_at_desc"
+      },
+      {
+        "key": { "role": 1, "active": 1 },
+        "name": "role_active"
+      }
+    ]
+  }
+]

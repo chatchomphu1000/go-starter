@@ -1,0 +1,17 @@
+with-expecter: true
+dir: internal/mocks
+outpkg: mocks
+mockname: "Mock{{.InterfaceName}}"
+filename: "{{.InterfaceName | snakecase}}_mock.go"
+packages:
+  github.com/chatchomphu1000/go-starter/internal/core/ports/inbound:
+    interfaces:
+      UserService:
+  github.com/chatchomphu1000/go-starter/internal/core/ports/outbound:
+    interfaces:
+      UserRepository:
+      Notifier:
+      Clock:
+      IDGenerator:
+      PasswordHasher:
+      TokenIssuer:

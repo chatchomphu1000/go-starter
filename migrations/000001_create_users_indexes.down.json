@@ -1,0 +1,6 @@
+[
+  {
+    "dropIndexes": "users",
+    "index": ["email_unique", "created_at_desc", "role_active"]
+  }
+]

@@ -1,0 +1,29 @@
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - revive
+    - gocritic
+    - gosec
+    - gocyclo
+    - bodyclose
+    - contextcheck
+    - errorlint
+    - nilerr
+    - nolintlint
+    - unconvert
+    - unparam
+    - unused
+    - wastedassign
+    - misspell
+    - whitespace
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters: [gocyclo, gosec, errcheck]

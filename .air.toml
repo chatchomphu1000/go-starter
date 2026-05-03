@@ -1,0 +1,12 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  cmd = "go build -o ./tmp/app ./"
+  bin = "./tmp/app serve"
+  include_ext = ["go", "yaml", "yml", "json"]
+  exclude_dir = ["bin", "docs", "tmp", "internal/mocks", "test/testdata"]
+  delay = 500
+
+[log]
+  time = true

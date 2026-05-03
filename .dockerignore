@@ -1,0 +1,14 @@
+.git
+.github
+bin/
+coverage.out
+*.md
+!README.md
+.env*
+Makefile
+test/
+tmp/
+.idea/
+.vscode/
+.DS_Store
+internal/mocks/

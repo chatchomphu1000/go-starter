@@ -1,0 +1,352 @@
+basePath: /
+definitions:
+  dto.ErrorResponse:
+    properties:
+      code:
+        type: string
+      details:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+      request_id:
+        type: string
+    type: object
+  dto.ListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.UserResponse'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dto.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      expires_at:
+        type: string
+      token_type:
+        type: string
+    type: object
+  dto.RegisterRequest:
+    properties:
+      email:
+        maxLength: 254
+        type: string
+      name:
+        maxLength: 80
+        minLength: 2
+        type: string
+      password:
+        maxLength: 128
+        minLength: 10
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  dto.UpdateRequest:
+    properties:
+      name:
+        maxLength: 80
+        minLength: 2
+        type: string
+    type: object
+  dto.UserResponse:
+    properties:
+      active:
+        type: boolean
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  handler.buildInfo:
+    properties:
+      build_time:
+        type: string
+      commit:
+        type: string
+      version:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: API Support
+  description: Production-ready Go REST API starter with hexagonal architecture.
+  title: Go Starter API
+  version: "1.0"
+paths:
+  /api/v1/users:
+    get:
+      description: Returns a paginated list of users
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Sort field
+        enum:
+        - created_at
+        - name
+        - email
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort descending
+        in: query
+        name: sort_desc
+        type: boolean
+      - description: Filter by role
+        enum:
+        - admin
+        - user
+        in: query
+        name: role
+        type: string
+      - description: Filter by active
+        in: query
+        name: active
+        type: boolean
+      - description: Search by name/email
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListResponse'
+      security:
+      - BearerAuth: []
+      summary: List users
+      tags:
+      - users
+  /api/v1/users/{id}:
+    delete:
+      description: Deletes a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete user
+      tags:
+      - users
+    get:
+      description: Returns a single user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get user by ID
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Updates user information
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update user
+      tags:
+      - users
+  /api/v1/users/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and returns a JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LoginResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Login
+      tags:
+      - users
+  /api/v1/users/register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user account
+      parameters:
+      - description: Registration data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - users
+  /health:
+    get:
+      description: Returns 200 OK if the server is running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Liveness check
+      tags:
+      - health
+  /ready:
+    get:
+      description: Returns 200 if MongoDB is reachable, 503 otherwise
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "503":
+          description: Service Unavailable
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Readiness check
+      tags:
+      - health
+  /version:
+    get:
+      description: Returns version, commit, and build time
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.buildInfo'
+      summary: Version info
+      tags:
+      - health
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and the JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

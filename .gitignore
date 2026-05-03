@@ -1,0 +1,14 @@
+bin/
+coverage.out
+coverage.html
+.env
+.env.*
+!.env.example
+vendor/
+tmp/
+*.out
+*.log
+.idea/
+.vscode/
+.DS_Store
+internal/mocks/
