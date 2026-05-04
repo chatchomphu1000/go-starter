@@ -3,25 +3,11 @@ package inbound
 
 import (
 	"context"
-	"time"
 
 	"github.com/chatchomphu1000/go-starter/internal/core/domain"
 )
 
 //go:generate go run github.com/vektra/mockery/v2 --name=UserService
-
-// RegisterInput holds the data required to register a new user.
-type RegisterInput struct {
-	Name     string
-	Email    string
-	Password string
-}
-
-// LoginInput holds the data required to authenticate a user.
-type LoginInput struct {
-	Email    string
-	Password string
-}
 
 // UpdateInput holds the data for updating a user. Nil fields are not changed.
 type UpdateInput struct {
@@ -39,17 +25,8 @@ type ListFilter struct {
 	SortDesc bool
 }
 
-// AuthToken represents an authentication token returned on successful login.
-type AuthToken struct {
-	AccessToken string
-	ExpiresAt   time.Time
-	TokenType   string
-}
-
 // UserService defines the inbound port for user-related business operations.
 type UserService interface {
-	Register(ctx context.Context, in RegisterInput) (*domain.User, error)
-	Login(ctx context.Context, in LoginInput) (*AuthToken, error)
 	GetByID(ctx context.Context, id string) (*domain.User, error)
 	List(ctx context.Context, f ListFilter) ([]*domain.User, int64, error)
 	Update(ctx context.Context, id string, in UpdateInput) (*domain.User, error)

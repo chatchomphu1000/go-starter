@@ -7,19 +7,6 @@ import (
 	"github.com/chatchomphu1000/go-starter/internal/core/domain"
 )
 
-// RegisterRequest is the HTTP request body for user registration.
-type RegisterRequest struct {
-	Name     string `json:"name" validate:"required,min=2,max=80"`
-	Email    string `json:"email" validate:"required,email,max=254"`
-	Password string `json:"password" validate:"required,min=10,max=128"`
-}
-
-// LoginRequest is the HTTP request body for user login.
-type LoginRequest struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
-}
-
 // UpdateRequest is the HTTP request body for updating a user.
 type UpdateRequest struct {
 	Name *string `json:"name" validate:"omitempty,min=2,max=80"`
@@ -44,19 +31,13 @@ type ListResponse struct {
 	Limit int            `json:"limit"`
 }
 
-// LoginResponse is the HTTP response body for a successful login.
+// LoginResponse is the HTTP response body for a successful login or token refresh.
 type LoginResponse struct {
-	AccessToken string    `json:"access_token"`
-	TokenType   string    `json:"token_type"`
-	ExpiresAt   time.Time `json:"expires_at"`
-}
-
-// ErrorResponse is the HTTP response body returned on errors.
-type ErrorResponse struct {
-	Code      string   `json:"code"`
-	Message   string   `json:"message"`
-	Details   []string `json:"details,omitempty"`
-	RequestID string   `json:"request_id,omitempty"`
+	AccessToken      string    `json:"access_token"`
+	TokenType        string    `json:"token_type"`
+	ExpiresAt        time.Time `json:"expires_at"`
+	RefreshToken     string    `json:"refresh_token"`
+	RefreshExpiresAt time.Time `json:"refresh_expires_at"`
 }
 
 // ToUserResponse maps a domain User to a UserResponse DTO.

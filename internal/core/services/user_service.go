@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"unicode"
 
 	"go.uber.org/zap"
 
@@ -224,42 +223,6 @@ func (s *userService) Delete(ctx context.Context, id string) error {
 	}
 
 	s.log.Info("user deleted", zap.String("user_id", id))
-
-	return nil
-}
-
-// validatePassword enforces password policy: min 10 chars, upper, lower, digit, symbol.
-func validatePassword(password string) error {
-	if len(password) < 10 {
-		return fmt.Errorf("%w: minimum 10 characters required", domain.ErrWeakPassword)
-	}
-
-	var hasUpper, hasLower, hasDigit, hasSymbol bool
-	for _, ch := range password {
-		switch {
-		case unicode.IsUpper(ch):
-			hasUpper = true
-		case unicode.IsLower(ch):
-			hasLower = true
-		case unicode.IsDigit(ch):
-			hasDigit = true
-		case unicode.IsPunct(ch) || unicode.IsSymbol(ch):
-			hasSymbol = true
-		}
-	}
-
-	if !hasUpper {
-		return fmt.Errorf("%w: must contain at least one uppercase letter", domain.ErrWeakPassword)
-	}
-	if !hasLower {
-		return fmt.Errorf("%w: must contain at least one lowercase letter", domain.ErrWeakPassword)
-	}
-	if !hasDigit {
-		return fmt.Errorf("%w: must contain at least one digit", domain.ErrWeakPassword)
-	}
-	if !hasSymbol {
-		return fmt.Errorf("%w: must contain at least one symbol", domain.ErrWeakPassword)
-	}
 
 	return nil
 }

@@ -88,10 +88,12 @@ var serveCmd = &cobra.Command{
 			Retry:   cfg.Notifier.Retry,
 		}, log)
 
-		// Build service.
+		// Build services.
+		authService := services.NewAuthService(userRepo, notifier, hasher, tokenIssuer, systemClock, uuidGen, log)
 		userService := services.NewUserService(userRepo, notifier, hasher, tokenIssuer, systemClock, uuidGen, log)
 
 		// Build handlers.
+		authHandler := handler.NewAuthHandler(authService, log)
 		userHandler := handler.NewUserHandler(userService, log)
 		healthHandler := handler.NewHealthHandler(mongoClient, log, version, commit, buildTime)
 
@@ -102,6 +104,7 @@ var serveCmd = &cobra.Command{
 
 		apphttp.SetupRouter(apphttp.RouterConfig{
 			Echo:          e,
+			AuthHandler:   authHandler,
 			UserHandler:   userHandler,
 			HealthHandler: healthHandler,
 			TokenIssuer:   tokenIssuer,

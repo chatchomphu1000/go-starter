@@ -13,4 +13,6 @@ import (
 type TokenIssuer interface {
 	Issue(ctx context.Context, userID string, role domain.Role) (token string, expiresAt time.Time, err error)
 	Verify(ctx context.Context, token string) (userID string, role domain.Role, err error)
+	IssueRefresh(ctx context.Context, userID string, role domain.Role) (token string, expiresAt time.Time, err error)
+	VerifyRefresh(ctx context.Context, token string) (userID string, role domain.Role, err error)
 }

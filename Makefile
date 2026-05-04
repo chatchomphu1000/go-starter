@@ -11,7 +11,7 @@ LDFLAGS    := -s -w -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.
 .PHONY: build build-linux run run-prod test test-integration test-cover test-ci \
         swagger swagger-check migrate-up migrate-down migrate-create migrate-status \
         lint fmt vet mocks check docker-build docker-up docker-down docker-logs \
-        deps clean help
+        deps install clean help
 
 build: ## Build the application binary
 	go build -ldflags "$(LDFLAGS)" -o bin/app .
@@ -101,6 +101,16 @@ docker-down: ## Stop and remove Docker Compose services
 
 docker-logs: ## Follow Docker Compose logs
 	docker compose logs -f app
+
+install: ## Install required CLI tools (swag, air, golangci-lint, goimports, mockery)
+	@echo "Installing tools..."
+	go install github.com/swaggo/swag/cmd/swag@latest
+	go install github.com/air-verse/air@latest
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install golang.org/x/tools/cmd/goimports@latest
+	go install github.com/vektra/mockery/v2@latest
+	@echo "All tools installed to $$(go env GOPATH)/bin"
+	@echo "Make sure $$(go env GOPATH)/bin is in your PATH"
 
 deps: ## Download and tidy dependencies
 	go mod tidy

@@ -16,6 +16,7 @@ import (
 type RouterConfig struct {
 	Echo          *echo.Echo
 	UserHandler   *handler.UserHandler
+	AuthHandler   *handler.AuthHandler
 	HealthHandler *handler.HealthHandler
 	TokenIssuer   outbound.TokenIssuer
 	Config        *config.Config
@@ -57,8 +58,9 @@ func SetupRouter(rc RouterConfig) {
 	v1 := e.Group("/api/v1")
 
 	// Public routes.
-	v1.POST("/users/register", rc.UserHandler.Register)
-	v1.POST("/users/login", rc.UserHandler.Login)
+	v1.POST("/auth/register", rc.AuthHandler.Register)
+	v1.POST("/auth/login", rc.AuthHandler.Login)
+	v1.POST("/auth/refresh", rc.AuthHandler.RefreshToken)
 
 	// Protected routes.
 	protected := v1.Group("")
