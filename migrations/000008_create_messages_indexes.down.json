@@ -1,0 +1,4 @@
+{
+  "dropIndexes": "message_threads",
+  "index": ["participants", "participants_updated", "updated_at_desc"]
+}

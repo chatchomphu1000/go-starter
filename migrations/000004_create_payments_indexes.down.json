@@ -1,0 +1,4 @@
+{
+  "dropIndexes": "payments",
+  "index": ["invoice_id", "tenant_id", "owner_id", "status", "owner_status_paid", "gateway_ref", "created_at_desc"]
+}

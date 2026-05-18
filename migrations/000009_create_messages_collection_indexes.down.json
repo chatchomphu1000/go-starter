@@ -1,0 +1,4 @@
+{
+  "dropIndexes": "messages",
+  "index": ["thread_id", "thread_created", "sender_id", "thread_read_by", "created_at_desc"]
+}

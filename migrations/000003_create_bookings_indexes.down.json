@@ -1,0 +1,4 @@
+{
+  "dropIndexes": "bookings",
+  "index": ["room_id", "tenant_id", "owner_id", "status", "room_booking_overlap", "tenant_status", "created_at_desc"]
+}

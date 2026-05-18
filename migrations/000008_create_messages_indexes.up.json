@@ -1,0 +1,8 @@
+{
+  "createIndexes": "message_threads",
+  "indexes": [
+    { "key": { "participants": 1 }, "name": "participants" },
+    { "key": { "participants": 1, "updated_at": -1 }, "name": "participants_updated" },
+    { "key": { "updated_at": -1 }, "name": "updated_at_desc" }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "createIndexes": "rooms",
+  "indexes": [
+    { "key": { "owner_id": 1, "number": 1 }, "name": "owner_number_unique", "unique": true },
+    { "key": { "owner_id": 1 }, "name": "owner_id" },
+    { "key": { "status": 1 }, "name": "status" },
+    { "key": { "floor": 1 }, "name": "floor" },
+    { "key": { "rent_price": 1 }, "name": "rent_price" },
+    { "key": { "created_at": -1 }, "name": "created_at_desc" }
+  ]
+}

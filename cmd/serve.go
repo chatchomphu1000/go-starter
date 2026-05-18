@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/cobra"
@@ -21,6 +22,8 @@ import (
 	"github.com/chatchomphu1000/go-starter/internal/adapters/outbound/jwtissuer"
 	"github.com/chatchomphu1000/go-starter/internal/adapters/outbound/mongodb"
 	"github.com/chatchomphu1000/go-starter/internal/core/services"
+	"github.com/chatchomphu1000/go-starter/internal/worker"
+	"github.com/chatchomphu1000/go-starter/internal/worker/jobs"
 )
 
 // version, commit, buildTime are set via ldflags.
@@ -41,7 +44,8 @@ var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Start the HTTP server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		ctx := context.Background()
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
 
 		// Connect to MongoDB.
 		mongoClient, err := mongodb.NewMongoClient(ctx, mongodb.MongoConfig{
@@ -71,7 +75,7 @@ var serveCmd = &cobra.Command{
 
 		db := mongoClient.Database(cfg.Mongo.Database)
 
-		// Build adapters.
+		// ── Adapters ──────────────────────────────────────────────────────────
 		systemClock := clock.NewSystemClock()
 		uuidGen := idgen.NewUUIDGenerator()
 		hasher := crypto.NewBcryptHasher(12)
@@ -81,38 +85,90 @@ var serveCmd = &cobra.Command{
 			cfg.JWT.Issuer,
 			systemClock,
 		)
-		userRepo := mongodb.NewUserRepo(db)
 		notifier := httpclient.NewNotifier(httpclient.NotifierConfig{
 			BaseURL: cfg.Notifier.BaseURL,
 			Timeout: cfg.Notifier.Timeout,
 			Retry:   cfg.Notifier.Retry,
 		}, log)
 
-		// Build services.
+		// ── Repositories ──────────────────────────────────────────────────────
+		userRepo := mongodb.NewUserRepo(db)
+		roomRepo := mongodb.NewRoomRepo(db)
+		bookingRepo := mongodb.NewBookingRepo(db)
+		paymentRepo := mongodb.NewPaymentRepo(db)
+		invoiceRepo := mongodb.NewInvoiceRepo(db)
+		maintenanceRepo := mongodb.NewMaintenanceRepo(db)
+		noticeRepo := mongodb.NewNoticeRepo(db)
+		messageRepo := mongodb.NewMessageRepo(db)
+		activityLogRepo := mongodb.NewActivityLogRepo(db)
+		_ = activityLogRepo // used by audit middleware in future extension
+
+		// ── Services ──────────────────────────────────────────────────────────
 		authService := services.NewAuthService(userRepo, notifier, hasher, tokenIssuer, systemClock, uuidGen, log)
 		userService := services.NewUserService(userRepo, notifier, hasher, tokenIssuer, systemClock, uuidGen, log)
+		roomService := services.NewRoomService(roomRepo, systemClock, uuidGen, log)
+		bookingService := services.NewBookingService(bookingRepo, roomRepo, systemClock, uuidGen, log)
+		paymentService := services.NewPaymentService(paymentRepo, invoiceRepo, systemClock, uuidGen, log)
+		invoiceService := services.NewInvoiceService(invoiceRepo, userRepo, systemClock, uuidGen, log)
+		maintenanceService := services.NewMaintenanceService(maintenanceRepo, systemClock, uuidGen, log)
+		noticeService := services.NewNoticeService(noticeRepo, systemClock, uuidGen, log)
+		messageService := services.NewMessageService(messageRepo, systemClock, uuidGen, log)
+		reportService := services.NewReportService(
+			roomRepo, bookingRepo, paymentRepo,
+			invoiceRepo, maintenanceRepo, messageRepo, log,
+		)
 
-		// Build handlers.
+		// ── HTTP Handlers ─────────────────────────────────────────────────────
 		authHandler := handler.NewAuthHandler(authService, log)
 		userHandler := handler.NewUserHandler(userService, log)
 		healthHandler := handler.NewHealthHandler(mongoClient, log, version, commit, buildTime)
+		roomHandler := handler.NewRoomHandler(roomService, log)
+		bookingHandler := handler.NewBookingHandler(bookingService, log)
+		paymentHandler := handler.NewPaymentHandler(paymentService, log)
+		invoiceHandler := handler.NewInvoiceHandler(invoiceService, log)
+		maintenanceHandler := handler.NewMaintenanceHandler(maintenanceService, log)
+		noticeHandler := handler.NewNoticeHandler(noticeService, log)
+		messageHandler := handler.NewMessageHandler(messageService, log)
+		reportHandler := handler.NewReportHandler(reportService, log)
 
-		// Build Echo.
+		// ── Echo ──────────────────────────────────────────────────────────────
 		e := echo.New()
 		e.HideBanner = true
 		e.HidePort = true
 
 		apphttp.SetupRouter(apphttp.RouterConfig{
-			Echo:          e,
-			AuthHandler:   authHandler,
-			UserHandler:   userHandler,
-			HealthHandler: healthHandler,
-			TokenIssuer:   tokenIssuer,
-			Config:        cfg,
-			Logger:        log,
+			Echo:               e,
+			AuthHandler:        authHandler,
+			UserHandler:        userHandler,
+			HealthHandler:      healthHandler,
+			RoomHandler:        roomHandler,
+			BookingHandler:     bookingHandler,
+			PaymentHandler:     paymentHandler,
+			InvoiceHandler:     invoiceHandler,
+			MaintenanceHandler: maintenanceHandler,
+			NoticeHandler:      noticeHandler,
+			MessageHandler:     messageHandler,
+			ReportHandler:      reportHandler,
+			TokenIssuer:        tokenIssuer,
+			Config:             cfg,
+			Logger:             log,
 		})
 
-		// Start server in goroutine.
+		// ── Background Worker ─────────────────────────────────────────────────
+		w := worker.New(3, 50, log)
+		scheduler := worker.NewScheduler(w, log)
+
+		scheduler.Register("invoice.overdue", 1*time.Hour,
+			jobs.NewInvoiceOverdueJob(invoiceRepo, systemClock, log))
+		scheduler.Register("rent.reminder", 24*time.Hour,
+			jobs.NewRentReminderJob(invoiceRepo, userRepo, notifier, systemClock, log))
+
+		// Start worker pool and scheduler in background goroutines.
+		workerCtx, workerCancel := context.WithCancel(ctx)
+		go w.Start(workerCtx)
+		go scheduler.Run(workerCtx)
+
+		// ── HTTP Server ───────────────────────────────────────────────────────
 		addr := fmt.Sprintf(":%d", cfg.Server.Port)
 		server := &http.Server{
 			Addr:         addr,
@@ -123,37 +179,42 @@ var serveCmd = &cobra.Command{
 		e.Server = server
 
 		go func() {
-			log.Info("starting server", zap.String("addr", addr), zap.String("version", version))
+			log.Info("starting server",
+				zap.String("addr", addr),
+				zap.String("version", version),
+			)
 			if err := e.Start(addr); err != nil && err != http.ErrServerClosed {
 				log.Error("server error", zap.Error(err))
 			}
 		}()
 
-		// Wait for interrupt signal.
+		// ── Graceful Shutdown ─────────────────────────────────────────────────
 		quit := make(chan os.Signal, 1)
 		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 		<-quit
 
 		log.Info("shutting down server...")
 
-		// Graceful shutdown.
-		shutdownCtx, cancel := context.WithTimeout(ctx, cfg.Server.ShutdownTimeout)
-		defer cancel()
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), cfg.Server.ShutdownTimeout)
+		defer shutdownCancel()
 
-		// 1. Shutdown HTTP server.
+		// 1. Stop accepting new requests.
 		if err := e.Shutdown(shutdownCtx); err != nil {
 			log.Error("server shutdown error", zap.Error(err))
 		} else {
 			log.Info("server shutdown complete")
 		}
 
-		// 2. Close idle HTTP connections.
+		// 2. Stop background workers.
+		workerCancel()
+
+		// 3. Close idle HTTP connections.
 		notifier.CloseIdleConnections()
 
-		// 3. Disconnect MongoDB.
+		// 4. Disconnect MongoDB.
 		mongodb.Close(shutdownCtx, mongoClient, log)
 
-		// 4. Sync logger.
+		// 5. Sync logger.
 		_ = log.Sync()
 
 		return nil

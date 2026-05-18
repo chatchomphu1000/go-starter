@@ -1,0 +1,4 @@
+{
+  "dropIndexes": "notices",
+  "index": ["owner_id", "type", "pinned_created", "expires_at", "created_at_desc"]
+}

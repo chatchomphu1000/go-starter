@@ -1,0 +1,12 @@
+{
+  "createIndexes": "bookings",
+  "indexes": [
+    { "key": { "room_id": 1 }, "name": "room_id" },
+    { "key": { "tenant_id": 1 }, "name": "tenant_id" },
+    { "key": { "owner_id": 1 }, "name": "owner_id" },
+    { "key": { "status": 1 }, "name": "status" },
+    { "key": { "room_id": 1, "status": 1, "start_date": 1, "end_date": 1 }, "name": "room_booking_overlap" },
+    { "key": { "tenant_id": 1, "status": 1 }, "name": "tenant_status" },
+    { "key": { "created_at": -1 }, "name": "created_at_desc" }
+  ]
+}

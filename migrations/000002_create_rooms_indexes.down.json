@@ -1,0 +1,4 @@
+{
+  "dropIndexes": "rooms",
+  "index": ["owner_number_unique", "owner_id", "status", "floor", "rent_price", "created_at_desc"]
+}

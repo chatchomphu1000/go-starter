@@ -1,0 +1,4 @@
+{
+  "dropIndexes": "invoices",
+  "index": ["tenant_id", "owner_id", "booking_id", "status", "owner_status", "status_due_date", "due_date", "created_at_desc"]
+}

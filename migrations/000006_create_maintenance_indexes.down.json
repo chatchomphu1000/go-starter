@@ -1,0 +1,4 @@
+{
+  "dropIndexes": "maintenance_tickets",
+  "index": ["room_id", "tenant_id", "owner_id", "status", "priority", "owner_status", "created_at_desc"]
+}
