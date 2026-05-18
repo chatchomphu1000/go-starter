@@ -21,12 +21,9 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - ./.persistents/mongodb:/data/db
     healthcheck:
       test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ping:1}).ok"]
       interval: 5s
       timeout: 5s
       retries: 10
-
-volumes:
-  mongo_data:
