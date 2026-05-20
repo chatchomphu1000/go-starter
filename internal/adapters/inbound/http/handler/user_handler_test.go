@@ -93,7 +93,7 @@ func TestUserHandler_List(t *testing.T) {
 		{
 			name:  "invalid_role_param_propagates_error",
 			query: "?role=superuser",
-			setup: func(svc *mocks.MockUserService) {},
+			setup: func(_ *mocks.MockUserService) {},
 			// ParseRole returns ErrInvalidRole → mapped to 400 by error handler
 			wantStatus: http.StatusBadRequest,
 		},
@@ -142,14 +142,14 @@ func TestUserHandler_Update(t *testing.T) {
 			name:       "invalid_json_400",
 			id:         "user-1",
 			body:       `bad-json`,
-			setup:      func(svc *mocks.MockUserService) {},
+			setup:      func(_ *mocks.MockUserService) {},
 			wantStatus: http.StatusBadRequest,
 		},
 		{
 			name: "name_too_short_400",
 			id:   "user-1",
 			body: `{"name":"A"}`,
-			setup: func(svc *mocks.MockUserService) {
+			setup: func(_ *mocks.MockUserService) {
 				// UpdateInput.Name pointer with short name passes bind but fails validation
 			},
 			wantStatus: http.StatusBadRequest,

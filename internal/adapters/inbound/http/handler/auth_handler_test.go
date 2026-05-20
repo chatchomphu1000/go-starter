@@ -47,13 +47,13 @@ func TestAuthHandler_Register(t *testing.T) {
 		{
 			name:       "missing_required_fields_400",
 			body:       `{"email":"alice@example.com"}`,
-			setup:      func(svc *mocks.MockAuthService) {},
+			setup:      func(_ *mocks.MockAuthService) {},
 			wantStatus: http.StatusBadRequest,
 		},
 		{
 			name:       "invalid_json_400",
 			body:       `not-json`,
-			setup:      func(svc *mocks.MockAuthService) {},
+			setup:      func(_ *mocks.MockAuthService) {},
 			wantStatus: http.StatusBadRequest,
 		},
 		{
@@ -116,7 +116,7 @@ func TestAuthHandler_Login(t *testing.T) {
 		{
 			name:       "missing_fields_400",
 			body:       `{"email":"alice@example.com"}`,
-			setup:      func(svc *mocks.MockAuthService) {},
+			setup:      func(_ *mocks.MockAuthService) {},
 			wantStatus: http.StatusBadRequest,
 		},
 		{
@@ -175,7 +175,7 @@ func TestAuthHandler_RefreshToken(t *testing.T) {
 		{
 			name:       "missing_refresh_token_400",
 			body:       `{}`,
-			setup:      func(svc *mocks.MockAuthService) {},
+			setup:      func(_ *mocks.MockAuthService) {},
 			wantStatus: http.StatusBadRequest,
 		},
 		{

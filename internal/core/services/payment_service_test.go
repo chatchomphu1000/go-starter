@@ -81,7 +81,7 @@ func TestPaymentService_Create(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			input:   validCreatePaymentInput(),
-			setup:   func(m paymentMocks) {},
+			setup:   func(_ paymentMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -154,7 +154,7 @@ func TestPaymentService_GetByID(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			id:      "pay-1",
-			setup:   func(m paymentMocks) {},
+			setup:   func(_ paymentMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -233,7 +233,7 @@ func TestPaymentService_HandleWebhook(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			input:   inbound.WebhookInput{PaymentID: "pay-1", Status: "completed"},
-			setup:   func(m paymentMocks) {},
+			setup:   func(_ paymentMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -317,7 +317,7 @@ func TestPaymentService_Refund(t *testing.T) {
 			ctx:     cancelledCtx(),
 			id:      "pay-1",
 			ownerID: "owner-1",
-			setup:   func(m paymentMocks) {},
+			setup:   func(_ paymentMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -389,7 +389,7 @@ func TestPaymentService_List(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			filter:  inbound.PaymentFilter{},
-			setup:   func(m paymentMocks) {},
+			setup:   func(_ paymentMocks) {},
 			wantErr: context.Canceled,
 		},
 	}

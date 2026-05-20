@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"go.uber.org/zap"
@@ -101,9 +102,12 @@ func (s *paymentService) HandleWebhook(ctx context.Context, in inbound.WebhookIn
 	switch in.Status {
 	case "completed":
 		if err := p.Complete(in.GatewayTxID, now); err != nil {
-			// Already paid — idempotent, not an error
-			s.log.Warn("webhook: payment already completed", zap.String("payment_id", p.ID))
-			return nil
+			if errors.Is(err, domain.ErrPaymentAlreadyPaid) {
+				// Already paid — idempotent, not an error
+				s.log.Warn("webhook: payment already completed", zap.String("payment_id", p.ID))
+				return nil
+			}
+			return fmt.Errorf("paymentService.HandleWebhook: %w", err)
 		}
 		// Mark associated invoice as paid
 		if p.InvoiceID != "" {

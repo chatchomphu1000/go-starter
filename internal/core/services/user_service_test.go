@@ -66,7 +66,7 @@ func TestUserService_GetByID(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			id:      "user-1",
-			setup:   func(m userMocks) {},
+			setup:   func(_ userMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -133,7 +133,7 @@ func TestUserService_List(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			filter:  inbound.ListFilter{},
-			setup:   func(m userMocks) {},
+			setup:   func(_ userMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -207,7 +207,7 @@ func TestUserService_Update(t *testing.T) {
 			ctx:     cancelledCtx(),
 			id:      "user-1",
 			input:   inbound.UpdateInput{Name: &newName},
-			setup:   func(m userMocks) {},
+			setup:   func(_ userMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -276,7 +276,7 @@ func TestUserService_Delete(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			id:      "user-1",
-			setup:   func(m userMocks) {},
+			setup:   func(_ userMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -337,14 +337,14 @@ func TestUserService_Login(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			input:   validInput,
-			setup:   func(m userMocks) {},
+			setup:   func(_ userMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
 			name:  "invalid_email_format",
 			ctx:   context.Background(),
 			input: inbound.LoginInput{Email: "not-an-email", Password: "pass"},
-			setup: func(m userMocks) {},
+			setup: func(_ userMocks) {},
 			// anti-enumeration: returns ErrInvalidCredentials, not ErrInvalidEmail
 			wantErr: domain.ErrInvalidCredentials,
 		},
@@ -450,7 +450,7 @@ func TestUserService_Register(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			input:   validInput,
-			setup:   func(m userMocks) {},
+			setup:   func(_ userMocks) {},
 			wantErr: context.Canceled,
 		},
 		{

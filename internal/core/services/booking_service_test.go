@@ -88,7 +88,7 @@ func TestBookingService_List(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			filter:  inbound.BookingFilter{},
-			setup:   func(m bookingMocks) {},
+			setup:   func(_ bookingMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -148,7 +148,7 @@ func TestBookingService_Create(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			input:   validCreateBookingInput(),
-			setup:   func(m bookingMocks) {},
+			setup:   func(_ bookingMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -226,13 +226,14 @@ func TestBookingService_Create(t *testing.T) {
 
 			if tc.wantErr != nil {
 				require.Error(t, err)
-				if errors.Is(tc.wantErr, domain.ErrRoomNotFound) {
+				switch {
+				case errors.Is(tc.wantErr, domain.ErrRoomNotFound):
 					assert.True(t, errors.Is(err, domain.ErrRoomNotFound))
-				} else if errors.Is(tc.wantErr, domain.ErrRoomUnavailable) {
+				case errors.Is(tc.wantErr, domain.ErrRoomUnavailable):
 					assert.True(t, errors.Is(err, domain.ErrRoomUnavailable))
-				} else if errors.Is(tc.wantErr, domain.ErrBookingConflict) {
+				case errors.Is(tc.wantErr, domain.ErrBookingConflict):
 					assert.True(t, errors.Is(err, domain.ErrBookingConflict))
-				} else if tc.wantErr == context.Canceled {
+				case errors.Is(tc.wantErr, context.Canceled):
 					assert.True(t, errors.Is(err, context.Canceled))
 				}
 			} else {
@@ -270,7 +271,7 @@ func TestBookingService_GetByID(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			id:      "booking-1",
-			setup:   func(m bookingMocks) {},
+			setup:   func(_ bookingMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -331,7 +332,7 @@ func TestBookingService_Approve(t *testing.T) {
 			ctx:     cancelledCtx(),
 			id:      "booking-1",
 			ownerID: "owner-1",
-			setup:   func(m bookingMocks) {},
+			setup:   func(_ bookingMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -421,7 +422,7 @@ func TestBookingService_Reject(t *testing.T) {
 			id:      "booking-1",
 			ownerID: "owner-1",
 			reason:  "no vacancy",
-			setup:   func(m bookingMocks) {},
+			setup:   func(_ bookingMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -500,7 +501,7 @@ func TestBookingService_Cancel(t *testing.T) {
 			ctx:         cancelledCtx(),
 			id:          "booking-1",
 			requesterID: "tenant-1",
-			setup:       func(m bookingMocks) {},
+			setup:       func(_ bookingMocks) {},
 			wantErr:     context.Canceled,
 		},
 		{
@@ -580,7 +581,7 @@ func TestBookingService_Activate(t *testing.T) {
 			ctx:     cancelledCtx(),
 			id:      "booking-1",
 			ownerID: "owner-1",
-			setup:   func(m bookingMocks) {},
+			setup:   func(_ bookingMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -658,7 +659,7 @@ func TestBookingService_Complete(t *testing.T) {
 			ctx:     cancelledCtx(),
 			id:      "booking-1",
 			ownerID: "owner-1",
-			setup:   func(m bookingMocks) {},
+			setup:   func(_ bookingMocks) {},
 			wantErr: context.Canceled,
 		},
 		{

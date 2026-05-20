@@ -88,7 +88,7 @@ func TestMaintenanceService_List(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			filter:  inbound.TicketFilter{},
-			setup:   func(m maintenanceMocks) {},
+			setup:   func(_ maintenanceMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -145,7 +145,7 @@ func TestMaintenanceService_Create(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			input:   validCreateTicketInput(),
-			setup:   func(m maintenanceMocks) {},
+			setup:   func(_ maintenanceMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -222,7 +222,7 @@ func TestMaintenanceService_GetByID(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			id:      "ticket-1",
-			setup:   func(m maintenanceMocks) {},
+			setup:   func(_ maintenanceMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -282,7 +282,7 @@ func TestMaintenanceService_StartWork(t *testing.T) {
 			ctx:     cancelledCtx(),
 			id:      "ticket-1",
 			ownerID: "owner-1",
-			setup:   func(m maintenanceMocks) {},
+			setup:   func(_ maintenanceMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -366,7 +366,7 @@ func TestMaintenanceService_Resolve(t *testing.T) {
 			id:      "ticket-1",
 			ownerID: "owner-1",
 			notes:   "Fixed",
-			setup:   func(m maintenanceMocks) {},
+			setup:   func(_ maintenanceMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -449,7 +449,7 @@ func TestMaintenanceService_Close(t *testing.T) {
 			ctx:      cancelledCtx(),
 			id:       "ticket-1",
 			tenantID: "tenant-1",
-			setup:    func(m maintenanceMocks) {},
+			setup:    func(_ maintenanceMocks) {},
 			wantErr:  context.Canceled,
 		},
 		{

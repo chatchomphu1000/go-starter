@@ -75,7 +75,7 @@ func TestReportService_IncomeExpense(t *testing.T) {
 			ownerID: "owner-1",
 			month:   1,
 			year:    2025,
-			setup:   func(m reportMocks) {},
+			setup:   func(_ reportMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -170,7 +170,7 @@ func TestReportService_OwnerDashboard(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			ownerID: "owner-1",
-			setup:   func(m reportMocks) {},
+			setup:   func(_ reportMocks) {},
 			wantErr: context.Canceled,
 		},
 	}
@@ -252,7 +252,7 @@ func TestReportService_TenantStatement(t *testing.T) {
 			tenantID: "tenant-1",
 			month:    1,
 			year:     2025,
-			setup:    func(m reportMocks) {},
+			setup:    func(_ reportMocks) {},
 			wantErr:  context.Canceled,
 		},
 		{

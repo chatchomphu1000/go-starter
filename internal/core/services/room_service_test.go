@@ -83,7 +83,7 @@ func TestRoomService_Create(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			input:   validCreateRoomInput(),
-			setup:   func(m roomMocks) {},
+			setup:   func(_ roomMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -135,7 +135,7 @@ func TestRoomService_Create(t *testing.T) {
 				require.Error(t, err)
 				if errors.Is(tc.wantErr, domain.ErrRoomNumberExists) {
 					assert.True(t, errors.Is(err, domain.ErrRoomNumberExists))
-				} else if tc.wantErr == context.Canceled {
+				} else if errors.Is(tc.wantErr, context.Canceled) {
 					assert.True(t, errors.Is(err, context.Canceled))
 				}
 			} else {
@@ -173,7 +173,7 @@ func TestRoomService_GetByID(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			id:      "room-1",
-			setup:   func(m roomMocks) {},
+			setup:   func(_ roomMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -230,7 +230,7 @@ func TestRoomService_List(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			filter:  inbound.RoomFilter{},
-			setup:   func(m roomMocks) {},
+			setup:   func(_ roomMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -295,7 +295,7 @@ func TestRoomService_Update(t *testing.T) {
 			id:      "room-1",
 			ownerID: "owner-1",
 			input:   inbound.UpdateRoomInput{Name: &newName},
-			setup:   func(m roomMocks) {},
+			setup:   func(_ roomMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -368,7 +368,7 @@ func TestRoomService_Delete(t *testing.T) {
 			ctx:     cancelledCtx(),
 			id:      "room-1",
 			ownerID: "owner-1",
-			setup:   func(m roomMocks) {},
+			setup:   func(_ roomMocks) {},
 			wantErr: context.Canceled,
 		},
 		{

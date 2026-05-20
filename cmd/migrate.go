@@ -17,7 +17,7 @@ var migrateCmd = &cobra.Command{
 var migrateUpCmd = &cobra.Command{
 	Use:   "up",
 	Short: "Run all pending migrations",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(_ *cobra.Command, _ []string) error {
 		runner, err := newMigrationRunner()
 		if err != nil {
 			return err
@@ -30,7 +30,7 @@ var migrateUpCmd = &cobra.Command{
 var migrateDownCmd = &cobra.Command{
 	Use:   "down",
 	Short: "Rollback migrations",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, _ []string) error {
 		runner, err := newMigrationRunner()
 		if err != nil {
 			return err
@@ -54,7 +54,7 @@ var migrateDownCmd = &cobra.Command{
 var migrateStatusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Show current migration version",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(_ *cobra.Command, _ []string) error {
 		runner, err := newMigrationRunner()
 		if err != nil {
 			return err
@@ -78,7 +78,7 @@ var migrateStatusCmd = &cobra.Command{
 var migrateVersionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print current migration version",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(_ *cobra.Command, _ []string) error {
 		runner, err := newMigrationRunner()
 		if err != nil {
 			return err
@@ -98,7 +98,7 @@ var migrateVersionCmd = &cobra.Command{
 var migrateForceCmd = &cobra.Command{
 	Use:   "force",
 	Short: "Force set migration version",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, _ []string) error {
 		runner, err := newMigrationRunner()
 		if err != nil {
 			return err

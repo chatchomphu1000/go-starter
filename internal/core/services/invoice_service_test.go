@@ -85,7 +85,7 @@ func TestInvoiceService_Create(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			input:   validCreateInvoiceInput(),
-			setup:   func(m invoiceMocks) {},
+			setup:   func(_ invoiceMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -166,7 +166,7 @@ func TestInvoiceService_GetByID(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			id:      "inv-1",
-			setup:   func(m invoiceMocks) {},
+			setup:   func(_ invoiceMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -226,7 +226,7 @@ func TestInvoiceService_Send(t *testing.T) {
 			ctx:     cancelledCtx(),
 			id:      "inv-1",
 			ownerID: "owner-1",
-			setup:   func(m invoiceMocks) {},
+			setup:   func(_ invoiceMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -306,7 +306,7 @@ func TestInvoiceService_MarkPaid(t *testing.T) {
 			ctx:     cancelledCtx(),
 			id:      "inv-1",
 			ownerID: "owner-1",
-			setup:   func(m invoiceMocks) {},
+			setup:   func(_ invoiceMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -385,7 +385,7 @@ func TestInvoiceService_Cancel(t *testing.T) {
 			ctx:     cancelledCtx(),
 			id:      "inv-1",
 			ownerID: "owner-1",
-			setup:   func(m invoiceMocks) {},
+			setup:   func(_ invoiceMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -443,7 +443,7 @@ func TestInvoiceService_GeneratePDF(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			id:      "inv-1",
-			setup:   func(m invoiceMocks) {},
+			setup:   func(_ invoiceMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -499,7 +499,7 @@ func TestInvoiceService_List(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			filter:  inbound.InvoiceFilter{},
-			setup:   func(m invoiceMocks) {},
+			setup:   func(_ invoiceMocks) {},
 			wantErr: context.Canceled,
 		},
 		{

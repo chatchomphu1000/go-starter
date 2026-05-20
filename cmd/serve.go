@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -43,7 +44,7 @@ func SetBuildInfo(v, c, bt string) {
 var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Start the HTTP server",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(_ *cobra.Command, _ []string) error {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
@@ -183,7 +184,7 @@ var serveCmd = &cobra.Command{
 				zap.String("addr", addr),
 				zap.String("version", version),
 			)
-			if err := e.Start(addr); err != nil && err != http.ErrServerClosed {
+			if err := e.Start(addr); err != nil && !errors.Is(err, http.ErrServerClosed) {
 				log.Error("server error", zap.Error(err))
 			}
 		}()

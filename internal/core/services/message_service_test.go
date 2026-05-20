@@ -96,7 +96,7 @@ func TestMessageService_Send(t *testing.T) {
 				ReceiverID: "user-2",
 				Content:    "Hello!",
 			},
-			setup:   func(m messageMocks) {},
+			setup:   func(_ messageMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -126,7 +126,7 @@ func TestMessageService_Send(t *testing.T) {
 
 			if tc.wantErr != nil {
 				require.Error(t, err)
-				if tc.wantErr == context.Canceled {
+				if errors.Is(tc.wantErr, context.Canceled) {
 					assert.True(t, errors.Is(err, context.Canceled))
 				}
 			} else {
@@ -166,7 +166,7 @@ func TestMessageService_GetThread(t *testing.T) {
 			ctx:     cancelledCtx(),
 			user1:   "user-1",
 			user2:   "user-2",
-			setup:   func(m messageMocks) {},
+			setup:   func(_ messageMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -225,7 +225,7 @@ func TestMessageService_MarkRead(t *testing.T) {
 			ctx:        cancelledCtx(),
 			threadID:   "thread-1",
 			receiverID: "user-2",
-			setup:      func(m messageMocks) {},
+			setup:      func(_ messageMocks) {},
 			wantErr:    context.Canceled,
 		},
 		{
@@ -249,7 +249,7 @@ func TestMessageService_MarkRead(t *testing.T) {
 
 			if tc.wantErr != nil {
 				require.Error(t, err)
-				if tc.wantErr == context.Canceled {
+				if errors.Is(tc.wantErr, context.Canceled) {
 					assert.True(t, errors.Is(err, context.Canceled))
 				}
 			} else {
@@ -288,7 +288,7 @@ func TestMessageService_ListThreads(t *testing.T) {
 			userID:  "user-1",
 			page:    1,
 			limit:   20,
-			setup:   func(m messageMocks) {},
+			setup:   func(_ messageMocks) {},
 			wantErr: context.Canceled,
 		},
 	}
@@ -334,7 +334,7 @@ func TestMessageService_ListMessages(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			filter:  inbound.MessageFilter{ThreadID: "thread-1"},
-			setup:   func(m messageMocks) {},
+			setup:   func(_ messageMocks) {},
 			wantErr: context.Canceled,
 		},
 	}

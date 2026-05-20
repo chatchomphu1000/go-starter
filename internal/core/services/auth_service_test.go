@@ -94,14 +94,14 @@ func TestAuthService_Register(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			input:   validInput,
-			setup:   func(m authMocks) {},
+			setup:   func(_ authMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
 			name:  "weak_password_too_short",
 			ctx:   context.Background(),
 			input: inbound.RegisterInput{Name: "Alice", Email: "alice@example.com", Password: "Short1!"},
-			setup: func(m authMocks) {},
+			setup: func(_ authMocks) {},
 			// no DB calls expected
 			wantErr: domain.ErrWeakPassword,
 		},
@@ -109,21 +109,21 @@ func TestAuthService_Register(t *testing.T) {
 			name:  "weak_password_no_upper",
 			ctx:   context.Background(),
 			input: inbound.RegisterInput{Name: "Alice", Email: "alice@example.com", Password: "secret@1234"},
-			setup: func(m authMocks) {},
+			setup: func(_ authMocks) {},
 			wantErr: domain.ErrWeakPassword,
 		},
 		{
 			name:  "weak_password_no_symbol",
 			ctx:   context.Background(),
 			input: inbound.RegisterInput{Name: "Alice", Email: "alice@example.com", Password: "Secret12345"},
-			setup: func(m authMocks) {},
+			setup: func(_ authMocks) {},
 			wantErr: domain.ErrWeakPassword,
 		},
 		{
 			name:  "invalid_email_format",
 			ctx:   context.Background(),
 			input: inbound.RegisterInput{Name: "Alice", Email: "not-an-email", Password: "Secret@1234"},
-			setup: func(m authMocks) {},
+			setup: func(_ authMocks) {},
 			wantErr: domain.ErrInvalidEmail,
 		},
 		{
@@ -223,14 +223,14 @@ func TestAuthService_Login(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			input:   validInput,
-			setup:   func(m authMocks) {},
+			setup:   func(_ authMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
 			name:  "invalid_email_format",
 			ctx:   context.Background(),
 			input: inbound.LoginInput{Email: "bad-email", Password: "Secret@1234"},
-			setup: func(m authMocks) {},
+			setup: func(_ authMocks) {},
 			// must return ErrInvalidCredentials, NOT ErrInvalidEmail (prevents user enumeration)
 			wantErr: domain.ErrInvalidCredentials,
 		},
@@ -302,8 +302,8 @@ func TestAuthService_Login(t *testing.T) {
 
 			if tc.wantErr != nil {
 				require.Error(t, err)
-				if tc.wantErr == domain.ErrInvalidCredentials ||
-					tc.wantErr == domain.ErrUserInactive {
+				if errors.Is(tc.wantErr, domain.ErrInvalidCredentials) ||
+					errors.Is(tc.wantErr, domain.ErrUserInactive) {
 					assert.True(t, errors.Is(err, tc.wantErr), "expected %v, got %v", tc.wantErr, err)
 				}
 			} else {
@@ -351,7 +351,7 @@ func TestAuthService_RefreshToken(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			input:   inbound.RefreshTokenInput{RefreshToken: "valid-refresh"},
-			setup:   func(m authMocks) {},
+			setup:   func(_ authMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -396,7 +396,7 @@ func TestAuthService_RefreshToken(t *testing.T) {
 
 			if tc.wantErr != nil {
 				require.Error(t, err)
-				if tc.wantErr == domain.ErrInvalidCredentials || tc.wantErr == domain.ErrUserInactive {
+				if errors.Is(tc.wantErr, domain.ErrInvalidCredentials) || errors.Is(tc.wantErr, domain.ErrUserInactive) {
 					assert.True(t, errors.Is(err, tc.wantErr), "expected %v, got %v", tc.wantErr, err)
 				}
 			} else {
@@ -434,7 +434,7 @@ func TestAuthService_GetByID(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			id:      "user-1",
-			setup:   func(m authMocks) {},
+			setup:   func(_ authMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -505,7 +505,7 @@ func TestAuthService_List(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			filter:  inbound.ListFilter{},
-			setup:   func(m authMocks) {},
+			setup:   func(_ authMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -578,7 +578,7 @@ func TestAuthService_Update(t *testing.T) {
 			ctx:     cancelledCtx(),
 			id:      "user-1",
 			input:   inbound.UpdateInput{Name: &newName},
-			setup:   func(m authMocks) {},
+			setup:   func(_ authMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -635,7 +635,7 @@ func TestAuthService_Delete(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			id:      "user-1",
-			setup:   func(m authMocks) {},
+			setup:   func(_ authMocks) {},
 			wantErr: context.Canceled,
 		},
 		{

@@ -20,5 +20,5 @@ const (
 	CodeEmailExists        = "EMAIL_ALREADY_EXISTS"
 	CodeInvalidEmail       = "INVALID_EMAIL"
 	CodeInvalidRole        = "INVALID_ROLE"
-	CodeInvalidCredentials = "INVALID_CREDENTIALS"
+	CodeInvalidCredentials = "INVALID_CREDENTIALS" //nolint:gosec
 )

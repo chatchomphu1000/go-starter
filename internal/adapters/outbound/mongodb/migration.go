@@ -1,12 +1,13 @@
 package mongodb
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 
 	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/mongodb"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/golang-migrate/migrate/v4/database/mongodb" // register mongodb driver
+	_ "github.com/golang-migrate/migrate/v4/source/file"      // register file source
 	"go.uber.org/zap"
 
 	"github.com/chatchomphu1000/go-starter/pkg/logger"
@@ -41,7 +42,7 @@ func NewMigrationRunner(uri, dbName, sourcePath string, log logger.Logger) (*Mig
 // Up runs all pending migrations.
 func (r *MigrationRunner) Up() error {
 	r.log.Info("running migrations up")
-	if err := r.m.Up(); err != nil && err != migrate.ErrNoChange {
+	if err := r.m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("mongodb.MigrationRunner.Up: %w", err)
 	}
 	r.log.Info("migrations up complete")
@@ -53,11 +54,11 @@ func (r *MigrationRunner) Up() error {
 func (r *MigrationRunner) Down(steps int) error {
 	r.log.Info("running migrations down", zap.Int("steps", steps))
 	if steps <= 0 {
-		if err := r.m.Down(); err != nil && err != migrate.ErrNoChange {
+		if err := r.m.Down(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 			return fmt.Errorf("mongodb.MigrationRunner.Down: %w", err)
 		}
 	} else {
-		if err := r.m.Steps(-steps); err != nil && err != migrate.ErrNoChange {
+		if err := r.m.Steps(-steps); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 			return fmt.Errorf("mongodb.MigrationRunner.Down: %w", err)
 		}
 	}
@@ -77,7 +78,7 @@ func (r *MigrationRunner) Force(version int) error {
 // Version returns the current migration version and dirty state.
 func (r *MigrationRunner) Version() (uint, bool, error) {
 	version, dirty, err := r.m.Version()
-	if err != nil && err != migrate.ErrNoChange {
+	if err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return 0, false, fmt.Errorf("mongodb.MigrationRunner.Version: %w", err)
 	}
 	return version, dirty, nil

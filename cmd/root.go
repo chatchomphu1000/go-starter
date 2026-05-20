@@ -23,7 +23,7 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "go-starter",
 	Short: "Go Starter API server",
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 		// Load .env file in development (optional, ignore if not present).
 		_ = godotenv.Load()
 

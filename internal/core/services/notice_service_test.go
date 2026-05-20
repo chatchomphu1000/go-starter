@@ -74,7 +74,7 @@ func TestNoticeService_Create(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			input:   validCreateNoticeInput(),
-			setup:   func(m noticeMocks) {},
+			setup:   func(_ noticeMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -148,7 +148,7 @@ func TestNoticeService_GetByID(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			id:      "notice-1",
-			setup:   func(m noticeMocks) {},
+			setup:   func(_ noticeMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -203,7 +203,7 @@ func TestNoticeService_List(t *testing.T) {
 			name:    "context_already_cancelled",
 			ctx:     cancelledCtx(),
 			filter:  inbound.NoticeFilter{},
-			setup:   func(m noticeMocks) {},
+			setup:   func(_ noticeMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -268,7 +268,7 @@ func TestNoticeService_Update(t *testing.T) {
 			id:      "notice-1",
 			ownerID: "owner-1",
 			input:   inbound.UpdateNoticeInput{Title: &newTitle},
-			setup:   func(m noticeMocks) {},
+			setup:   func(_ noticeMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
@@ -341,7 +341,7 @@ func TestNoticeService_Delete(t *testing.T) {
 			ctx:     cancelledCtx(),
 			id:      "notice-1",
 			ownerID: "owner-1",
-			setup:   func(m noticeMocks) {},
+			setup:   func(_ noticeMocks) {},
 			wantErr: context.Canceled,
 		},
 		{
