@@ -129,6 +129,64 @@ Add under the `outbound` packages block:
 {Pascal}Repository:
 ```
 
+### 14. `internal/core/services/{singular}_service_test.go`
+Generate a complete table-driven unit test file following the patterns in `/unit-test`.
+
+Required test coverage per method:
+- `success` — happy path with all mocks returning valid data
+- `context_already_cancelled` — `cancelledCtx()` helper, no mock expectations
+- Error cases for every outbound call in the method (repo error, domain error, etc.)
+
+```go
+package services
+
+import (
+    "context"
+    "errors"
+    "testing"
+    "time"
+
+    "github.com/stretchr/testify/assert"
+    "github.com/stretchr/testify/mock"
+    "github.com/stretchr/testify/require"
+
+    "github.com/chatchomphu1000/go-starter/internal/core/domain"
+    "github.com/chatchomphu1000/go-starter/internal/core/ports/inbound"
+    "github.com/chatchomphu1000/go-starter/internal/mocks"
+    "github.com/chatchomphu1000/go-starter/pkg/logger"
+)
+
+var fixedNow = time.Date(2025, 1, 15, 12, 0, 0, 0, time.UTC)
+
+func cancelledCtx() context.Context {
+    ctx, cancel := context.WithCancel(context.Background())
+    cancel()
+    return ctx
+}
+
+func nopLogger() logger.Logger {
+    l, _ := logger.NewLogger(logger.LoggerConfig{Level: "error", Format: "json"})
+    return l
+}
+
+type {singular}Mocks struct {
+    repo  *mocks.Mock{Pascal}Repository
+    clock *mocks.MockClock
+    ids   *mocks.MockIDGenerator
+}
+
+func newTest{Pascal}Service(t *testing.T) (*{singular}Service, {singular}Mocks) {
+    t.Helper()
+    m := {singular}Mocks{
+        repo:  new(mocks.Mock{Pascal}Repository),
+        clock: new(mocks.MockClock),
+        ids:   new(mocks.MockIDGenerator),
+    }
+    svc := New{Pascal}Service(m.repo, m.clock, m.ids, nopLogger()).(*{singular}Service)
+    return svc, m
+}
+```
+
 ### 12. `migrations/{NEXT_SEQ}_create_{plural}_indexes.up.json`
 ```json
 {
@@ -152,9 +210,11 @@ Add under the `outbound` packages block:
 
 1. Run `go build ./...` — fix any compile errors before reporting done
 2. Run `go vet ./...` — fix any vet issues
-3. Tell the user:
+3. Run `make gen-mock` — regenerate mocks to include the new `{Pascal}Repository`
+4. Run `go test ./internal/core/services/... -run Test{Pascal}Service -v -count=1 -race` — all tests must pass
+5. Tell the user:
    - List of files created/modified
-   - Next steps: wire the service in `cmd/serve.go`, run `make mocks`, run `make swagger`
+   - Next steps: wire the service in `cmd/serve.go`, run `make swagger`
    - Migration sequence number used
 
 ## Hard rules (never violate)

@@ -6,10 +6,27 @@ filename: "{{.InterfaceName | snakecase}}_mock.go"
 packages:
   github.com/chatchomphu1000/go-starter/internal/core/ports/inbound:
     interfaces:
+      AuthService:
       UserService:
+      RoomService:
+      BookingService:
+      InvoiceService:
+      PaymentService:
+      MaintenanceService:
+      NoticeService:
+      MessageService:
+      ReportService:
   github.com/chatchomphu1000/go-starter/internal/core/ports/outbound:
     interfaces:
       UserRepository:
+      RoomRepository:
+      BookingRepository:
+      InvoiceRepository:
+      PaymentRepository:
+      MaintenanceRepository:
+      NoticeRepository:
+      MessageRepository:
+      ActivityLogRepository:
       Notifier:
       Clock:
       IDGenerator:

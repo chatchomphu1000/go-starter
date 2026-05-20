@@ -939,3 +939,18 @@ For each file output:
 // FILE: {relative/path/to/file.go}
 // ============================================================
 [complete file content — no truncation, no "...rest of implementation"]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AVAILABLE SKILLS — read before acting on related tasks
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+When asked to write or generate unit tests        → read @.claude/commands/unit-test.md first
+When scaffolding a new domain feature             → read @.claude/commands/new-domain.md first
+When reviewing code changes or a PR               → read @.claude/commands/code-review.md first
+When checking for architecture violations         → read @.claude/commands/arch-guard.md first
+When running a smoke/end-to-end API test          → read @.claude/commands/smoke-test.md first
+When checking if code is ready to open a PR       → read @.claude/commands/pr-ready.md first
+When investigating performance issues             → read @.claude/commands/perf-review.md first
+When doing a security review                      → read @.claude/commands/sec-review.md first
+When creating a new database migration            → read @.claude/commands/new-migration.md first
+When checking overall project health              → read @.claude/commands/health.md first
