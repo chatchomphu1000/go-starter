@@ -2,7 +2,6 @@
 package crypto
 
 import (
-	"errors"
 	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
@@ -38,7 +37,7 @@ func (h *BcryptHasher) Hash(plain string) (string, error) {
 func (h *BcryptHasher) Verify(hashed, plain string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(plain))
 	if err != nil {
-		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+		if err == bcrypt.ErrMismatchedHashAndPassword {
 			return domain.ErrInvalidCredentials
 		}
 		return fmt.Errorf("bcryptHasher.Verify: %w", err)

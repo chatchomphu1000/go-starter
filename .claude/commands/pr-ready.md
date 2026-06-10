@@ -32,7 +32,7 @@ PASS / FAIL — build failures are blocking.
 ```bash
 go run github.com/vektra/mockery/v2 --dry-run 2>/dev/null | head -20
 ```
-If mockery is not installed, note it. If mocks are stale, run `make gen-mock` to regenerate.
+If mockery is not installed, note it. If mocks are stale, run `make mocks` to regenerate.
 
 ### 5. Swagger doc freshness
 ```bash

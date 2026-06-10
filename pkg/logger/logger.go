@@ -15,8 +15,6 @@ type contextKey string
 const RequestIDKey contextKey = "request_id"
 
 // LoggerConfig holds configuration for the logger.
-//
-//nolint:revive
 type LoggerConfig struct {
 	Level       string `mapstructure:"level" validate:"required,oneof=debug info warn error"`
 	Format      string `mapstructure:"format" validate:"required,oneof=json console"`

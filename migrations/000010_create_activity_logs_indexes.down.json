@@ -1,4 +1,0 @@
-{
-  "dropIndexes": "activity_logs",
-  "index": ["actor_id", "resource", "action", "created_at_desc", "actor_created"]
-}

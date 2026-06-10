@@ -119,7 +119,6 @@ func NewErrorHandler(log logger.Logger, isProduction bool) echo.HTTPErrorHandler
 // mapDomainError maps domain sentinel errors to apperrors.AppError.
 func mapDomainError(err error) error {
 	switch {
-	// User errors.
 	case errors.Is(err, domain.ErrUserNotFound):
 		return apperrors.NotFound("user not found", err)
 	case errors.Is(err, domain.ErrEmailAlreadyExists):
@@ -134,49 +133,6 @@ func mapDomainError(err error) error {
 		return apperrors.BadRequest("password does not meet requirements", err)
 	case errors.Is(err, domain.ErrUserInactive):
 		return apperrors.Forbidden("user account is inactive", err)
-
-	// Room errors.
-	case errors.Is(err, domain.ErrRoomNotFound):
-		return apperrors.NotFound("room not found", err)
-	case errors.Is(err, domain.ErrRoomUnavailable):
-		return apperrors.BadRequest("room is not available", err)
-	case errors.Is(err, domain.ErrRoomNumberExists):
-		return apperrors.Conflict("room number already exists", err)
-
-	// Booking errors.
-	case errors.Is(err, domain.ErrBookingNotFound):
-		return apperrors.NotFound("booking not found", err)
-	case errors.Is(err, domain.ErrBookingConflict):
-		return apperrors.Conflict("booking conflict", err)
-	case errors.Is(err, domain.ErrInvalidBookingTransition):
-		return apperrors.BadRequest("invalid booking status transition", err)
-
-	// Payment errors.
-	case errors.Is(err, domain.ErrPaymentNotFound):
-		return apperrors.NotFound("payment not found", err)
-	case errors.Is(err, domain.ErrPaymentAlreadyPaid):
-		return apperrors.Conflict("payment already completed", err)
-
-	// Invoice errors.
-	case errors.Is(err, domain.ErrInvoiceNotFound):
-		return apperrors.NotFound("invoice not found", err)
-
-	// Maintenance errors.
-	case errors.Is(err, domain.ErrTicketNotFound):
-		return apperrors.NotFound("maintenance ticket not found", err)
-
-	// Notice errors.
-	case errors.Is(err, domain.ErrNoticeNotFound):
-		return apperrors.NotFound("notice not found", err)
-
-	// Message errors.
-	case errors.Is(err, domain.ErrMessageNotFound):
-		return apperrors.NotFound("message thread not found", err)
-
-	// Access control.
-	case errors.Is(err, domain.ErrUnauthorizedAccess):
-		return apperrors.Forbidden("access denied", err)
-
 	default:
 		return err
 	}

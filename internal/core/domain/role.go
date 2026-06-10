@@ -7,18 +7,14 @@ type Role string
 
 // Role constants.
 const (
-	RoleAdmin  Role = "admin"
-	RoleOwner  Role = "owner"
-	RoleTenant Role = "tenant"
-	RoleUser   Role = "user"
+	RoleAdmin Role = "admin"
+	RoleUser  Role = "user"
 )
 
 // validRoles is the set of valid roles.
 var validRoles = map[Role]struct{}{
-	RoleAdmin:  {},
-	RoleOwner:  {},
-	RoleTenant: {},
-	RoleUser:   {},
+	RoleAdmin: {},
+	RoleUser:  {},
 }
 
 // ParseRole parses a string into a Role, returning ErrInvalidRole if the value is not recognized.

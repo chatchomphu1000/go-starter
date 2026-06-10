@@ -57,16 +57,11 @@ If `$ARGUMENTS` is a path: read those files directly.
 
 ### [G] Test quality (if test files changed)
 - [ ] Tests are table-driven with `testify/require` for fatal assertions, `assert` for non-fatal
-- [ ] Every method under test has a `context_already_cancelled` case with zero mock expectations
-- [ ] Mock setup uses `.EXPECT().Method(...).Return(...)` (with-expecter style) and `AssertExpectations(t)` at the end of every test
-- [ ] No `time.Sleep` in tests — use `mocks.MockClock` with `EXPECT().Now().Return(fixedNow)`
-- [ ] No `time.Now()` in test files — use a fixed `var fixedNow = time.Date(...)` constant
-- [ ] No network calls, no real DB, no file I/O in unit tests
-- [ ] Error assertions use `errors.Is(err, target)`, not string comparison
-- [ ] Service tests are `package services` (same-package) to enable testing unexported helpers
+- [ ] Mock setup uses `On(...).Return(...)` with `AssertExpectations(t)` at the end
+- [ ] No `time.Sleep` in tests — use Clock port mock
+- [ ] No network calls in unit tests
 - [ ] Integration tests have `//go:build integration` build tag
-- [ ] Test names follow `TestXxxService_MethodName_ScenarioDescription` pattern
-- [ ] Coverage ≥ 85% for `internal/core/services/` files — use `/unit-test` command to scaffold missing tests
+- [ ] Test names follow `TestXxx_scenario_expectedOutcome` pattern
 
 ### [H] MongoDB adapter specifics
 - [ ] `_id` stored as string (UUID v7), never `bson.ObjectID`
