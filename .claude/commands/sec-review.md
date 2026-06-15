@@ -31,7 +31,7 @@ Read `internal/adapters/inbound/http/middleware/auth.go` and `router.go`:
 - Error message same for expired vs invalid token (prevent enumeration)?
 
 ### [AUTH-3] Password security
-Read `internal/adapters/outbound/crypto/bcrypt_hasher.go` and `internal/core/services/user_service.go`:
+Read `internal/adapters/outbound/crypto/bcrypt_hasher.go` and `internal/core/services/auth_service.go`:
 - Bcrypt cost ≥ 12 in production? (cost < 10 is weak)
 - Constant-time comparison used — `bcrypt.CompareHashAndPassword` (not `==`)?
 - Weak password policy validated BEFORE hashing (saves compute on invalid input)?
