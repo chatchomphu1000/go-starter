@@ -1,6 +1,6 @@
-# Go Starter — Dormitory Rental Backend
+# Go Starter
 
-Production-ready REST API for managing dormitory/apartment rentals, built with **Go 1.25**, **Echo v4**, and **MongoDB**.
+Production-ready REST API starter built with **Go 1.25**, **Echo v4**, and **MongoDB**.
 
 ## Architecture
 
@@ -25,7 +25,6 @@ Domain core has zero framework dependencies. Swapping MongoDB or Echo touches on
 | Migrations | golang-migrate/v4 (MongoDB JSON) |
 | Outbound HTTP | go-resty/v2 |
 | API Docs | swaggo/swag + echo-swagger |
-| Background jobs | Custom goroutine pool + ticker scheduler |
 
 ## Quick Start
 
@@ -56,11 +55,28 @@ make docker-logs
 make docker-down
 ```
 
+## API Endpoints
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/api/v1/auth/register` | — | Register a new user |
+| POST | `/api/v1/auth/login` | — | Login, returns access + refresh token |
+| POST | `/api/v1/auth/refresh` | — | Refresh access token |
+| GET | `/api/v1/users` | JWT | List users (paginated, filterable) |
+| GET | `/api/v1/users/:id` | JWT | Get user by ID |
+| PUT | `/api/v1/users/:id` | JWT | Update user |
+| DELETE | `/api/v1/users/:id` | JWT | Delete user |
+| GET | `/health` | — | Liveness probe |
+| GET | `/ready` | — | Readiness probe (pings Mongo) |
+| GET | `/version` | — | Build info |
+| GET | `/swagger/*` | — | Swagger UI (disabled in production by default) |
+
 ## Roles
 
 | Role | Description |
 |---|---|
-| `user` | Basic authenticated user (default on register) |
+| `user` | Default role assigned on register |
+| `admin` | Administrator with elevated privileges |
 
 ## Development
 
@@ -79,12 +95,28 @@ make migrate-status # migration state
 ```
 internal/
 ├── core/
-│   ├── domain/        # Entities, value objects, sentinel errors
-│   ├── ports/         # Inbound (service interfaces + DTOs), Outbound (repo/infra interfaces)
-│   └── services/      # Business logic
+│   ├── domain/        # Entities (User), value objects (Email, Role), sentinel errors
+│   ├── ports/
+│   │   ├── inbound/   # AuthService, UserService interfaces + DTOs
+│   │   └── outbound/  # UserRepository, Notifier, Clock, IDGenerator, PasswordHasher, TokenIssuer
+│   └── services/      # AuthService, UserService implementations
 ├── adapters/
-│   ├── inbound/http/  # Echo handlers, middleware, router, DTOs
-│   └── outbound/      # MongoDB repos, JWT issuer, bcrypt, clock, UUID gen, HTTP notifier
+│   ├── inbound/http/
+│   │   ├── handler/   # AuthHandler, UserHandler, HealthHandler
+│   │   ├── middleware/ # RequestID, Logger, Recover, Auth, RateLimit, CORS, SecurityHeaders, BodyLimit
+│   │   ├── dto/       # Request/response structs + mappers
+│   │   ├── validator.go
+│   │   ├── error_handler.go
+│   │   └── router.go
+│   └── outbound/
+│       ├── mongodb/    # UserRepository implementation + migration runner
+│       ├── jwtissuer/  # HS256 JWT (access + refresh tokens)
+│       ├── crypto/     # bcrypt PasswordHasher
+│       ├── clock/      # System clock adapter
+│       ├── idgen/      # UUID v7 generator
+│       └── httpclient/ # Resty-based Notifier
+├── config/            # Viper-based config loading + validation
+└── mocks/             # mockery-generated testify mocks
 ```
 
 ## Environment Variables
